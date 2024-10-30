@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Selection Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f2ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0066cc;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+        }
+        .option {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #e6f2ff;
+            border: 1px solid #0066cc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .option:hover {
+            background-color: #b3d9ff;
+        }
+        .selected {
+            background-color: #0066cc;
+            color: #fff;
+        }
+        #submit, #next {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stream Selection Survey</h1>
+        <div id="survey"></div>
+        <button id="next">Next</button>
+        <button id="submit" style="display: none;">Submit</button>
+        <div id="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Which subject do you enjoy the most?", options: ["Mathematics", "Science", "History", "Art"] },
+            { question: "What type of activities do you prefer?", options: ["Working with numbers", "Researching topics", "Creative projects", "Group discussions"] },
+            { question: "How do you learn best?", options: ["Visual aids", "Hands-on activities", "Listening", "Reading"] },
+            { question: "Do you prefer working alone or in a team?", options: ["Alone", "In a team"] },
+            { question: "What motivates you the most?", options: ["Personal achievement", "Helping others", "Exploring new ideas", "Leading projects"] },
+            { question: "How important is job stability to you?", options: ["Very important", "Somewhat important", "Not important"] },
+            { question: "Do you enjoy solving problems?", options: ["Yes", "No"] },
+            { question: "What are your hobbies?", options: ["Sports", "Reading", "Traveling", "Art"] },
+            { question: "How do you feel about public speaking?", options: ["I love it", "I'm okay with it", "I dislike it", "I fear it"] },
+            { question: "Would you rather explore the universe or the ocean?", options: ["Universe", "Ocean"] },
+            { question: "Do you prefer practical work or theoretical studies?", options: ["Practical work", "Theoretical studies"] },
+            { question: "What kind of environment do you prefer?", options: ["Structured", "Flexible"] },
+            { question: "How do you handle challenges?", options: ["Head-on", "Strategically", "Avoiding them"] },
+            { question: "What do you value most in your career?", options: ["Creativity", "Impact", "Earnings", "Stability"] },
+            { question: "Do you prefer to lead or follow?", options: ["Lead", "Follow"] },
+            { question: "What subjects did you excel in?", options: ["Math", "Science", "Arts", "Languages"] },
+            { question: "What type of projects do you prefer?", options: ["Individual projects", "Group projects", "Research projects"] },
+            { question: "Do you like to experiment?", options: ["Yes", "No"] },
+            { question: "How do you feel about deadlines?", options: ["I thrive under them", "I prefer flexibility"] },
+            { question: "Would you enjoy a career in technology?", options: ["Yes", "No"] },
+            { question: "How important is work-life balance to you?", options: ["Very important", "Somewhat important", "Not important"] },
+        ];
+
+        let currentQuestionIndex = 0;
+        const answers = Array(questions.length).fill(null);
+
+        function displayQuestion() {
+            const surveyDiv = document.getElementById("survey");
+            surveyDiv.innerHTML = `
+                <div class="question">${questions[currentQuestionIndex].question}</div>
+                <div class="options">${questions[currentQuestionIndex].options.map((option, index) => `
+                    <div class="option" data-index="${index}">${option}</div>
+                `).join('')}</div>
+            `;
+
+            const options = document.querySelectorAll(".option");
+            options.forEach(option => {
+                option.addEventListener("click", function() {
+                    const selectedOption = document.querySelector(".selected");
+                    if (selectedOption) {
+                        selectedOption.classList.remove("selected");
+                    }
+                    this.classList.add("selected");
+                });
+            });
+        }
+
+        function getSelectedOption() {
+            const selected = document.querySelector(".selected");
+            if (selected) {
+                return selected.dataset.index;
+            }
+            return null;
+        }
+
+        document.getElementById("next").addEventListener("click", function() {
+            const selectedOption = getSelectedOption();
+            if (selectedOption !== null) {
+                answers[currentQuestionIndex] = selectedOption;
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex < questions.length) {
+                    displayQuestion();
+                } else {
+                    document.getElementById("survey").style.display = "none";
+                    document.getElementById("next").style.display = "none";
+                    document.getElementById("submit").style.display = "block";
+                }
+            } else {
+                alert("Please select an option before proceeding.");
+            }
+        });
+
+        document.getElementById("submit").addEventListener("click", function() {
+            const result = calculateResult();
+            document.getElementById("result").innerText = result;
+            document.getElementById("result").style.display = "block";
+        });
+
+        function calculateResult() {
+    const scores = {
+        Science: 0,
+        Management: 0,
+        Humanities: 0,
+        Law: 0,
+    };
+
+    answers.forEach((answer, index) => {
+        if (answer !== null) {
+            // Example scoring logic based on the answer
+            if (index === 0) { // "Which subject do you enjoy the most?"
+                if (answer == 0) scores["Science"]++; // Mathematics
+                else if (answer == 1) scores["Science"]++; // Science
+                else if (answer == 2) scores["Humanities"]++; // History
+                else if (answer == 3) scores["Humanities"]++; // Art
+            }
+            else if (index === 1) { // "What type of activities do you prefer?"
+                if (answer == 0) scores["Science"]++; // Working with numbers
+                else if (answer == 1) scores["Management"]++; // Researching topics
+                else if (answer == 2) scores["Humanities"]++; // Creative projects
+                else if (answer == 3) scores["Management"]++; // Group discussions
+            }
+            // Add more specific logic for the remaining questions
+            // ...
+        }
+    });
+
+    // Determine the highest score
+    const recommendedStream = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+    return `We recommend exploring the field of ${recommendedStream}.`;
+}
+
+
+        // Start the survey
+        displayQuestion();
+    </script>
+</body>
+</html>
